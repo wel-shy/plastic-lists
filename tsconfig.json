@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "outDir": "dist",
+        "lib": ["ES2015"],
+        "noImplicitAny": true
+    },
+    "compileOnSave": true,
+    "include": [
+        "src/**/*",
+        "app.ts",
+        "test/**/*",
+        "seed/**/*"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
