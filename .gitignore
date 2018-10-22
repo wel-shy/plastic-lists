@@ -1,3 +1,6 @@
 dist/
 node_modules/
 .env
+links.json
+playlists.json
+refresh_token.txt

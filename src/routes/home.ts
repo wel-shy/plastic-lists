@@ -1,8 +1,9 @@
 import { Request, Response, Router } from "express"
-import { generateRandomString } from '../utils'
+import { generateRandomString, saveTokenToFile, getRefreshToken } from '../utils'
 import * as querystring from 'querystring'
 import * as request from 'request'
 
+// spotify:user:229j52bdi8jy3pefa95xfzrnh:playlist:4t8c31P6r7cFgx3CE0sBI7
 /**
  * Get routes
  * @param  app Express.express
@@ -18,7 +19,7 @@ function home(): Router {
 
     res.cookie(stateKey, state);
 
-    const scope = 'user-read-private user-read-email'
+    const scope = 'user-read-private user-read-email playlist-read-private playlist-read-collaborative user-read-playback-state user-modify-playback-state'
     res.redirect('https://accounts.spotify.com/authorize?' + querystring.stringify({
       response_type: 'code',
       client_id: process.env.CLIENT_ID,
@@ -52,12 +53,23 @@ function home(): Router {
         json: true
       }
 
-      request.post(authOptions, function(error: Error, response: request.RequestResponse, body: any) {
+      request.post(authOptions, async function(error: Error, response: request.RequestResponse, body: any) {
         if (!error && response.statusCode === 200) {
           const access_token = body.access_token, refresh_token = body.refresh_token
 
+          // store token to file
+          if(access_token) {
+            try {
+              await saveTokenToFile(refresh_token)
+              const token = await getRefreshToken()
+              console.log(token)
+            } catch(e) {
+              console.error(e)
+            }
+          }
+
           const options = {
-            url: 'https://api.spotify.com/v1/me',
+            url: 'https://api.spotify.com/v1/me/playlists',
             headers: { 'Authorization': 'Bearer ' + access_token},
             json: true
           }
@@ -81,9 +93,9 @@ function home(): Router {
     }
   })
 
-  router.get('/refresh_token', function(req, res) {
+  router.get('/refresh_token/:token', function(req, res) {
     // requesting access token from refresh token
-    const refresh_token: string = req.query.refresh_token;
+    const refresh_token: string = req.query.refresh_token || req.params.token;
     const authOptions = {
       url: 'https://accounts.spotify.com/api/token',
       headers: { 'Authorization': 'Basic ' + (new Buffer(process.env.CLIENT_ID + ':' + process.env.CLIENT_SECRET).toString('base64')) },
