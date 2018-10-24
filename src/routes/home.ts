@@ -3,7 +3,6 @@ import { generateRandomString, saveTokenToFile, getRefreshToken } from '../utils
 import * as querystring from 'querystring'
 import * as request from 'request'
 
-// spotify:user:229j52bdi8jy3pefa95xfzrnh:playlist:4t8c31P6r7cFgx3CE0sBI7
 /**
  * Get routes
  * @param  app Express.express

@@ -8,12 +8,19 @@
               src="./assets/vinyl.svg"
               )
             h1.title Vinyl Player Thing
+            button.button(
+              @click="sendMessage"
+              ) Send
       div#login.has-text-centered(
         v-if="!isLoggedIn"
         )
         a.button(
           href="http://localhost:8888/login"
           ) Login to Spotify
+      div#last-tag
+        section.section
+          h4.is-size-4 Last Unkown Tag:
+          p {{ lastTag }}
       div#playlists
         section.section
           div.columns.is-mobile
@@ -44,6 +51,7 @@
 
 <script>
 import { getPlaylists, getLinks } from './api'
+
 export default {
   name: 'App',
   components: {},
@@ -79,6 +87,9 @@ export default {
           this.list[i].rfid = ''
         }
       }
+    },
+    sendMessage: function () {
+      this.socket.send('hello')
     }
   },
   data: function () {
@@ -89,7 +100,9 @@ export default {
       links: {},
       playlists: [],
       isEditing: false,
-      list: []
+      list: [],
+      socket: {},
+      lastTag: ''
     }
   },
   mounted: async function () {
@@ -120,6 +133,14 @@ export default {
       }
       this.list.push(playlist)
     }
+  },
+  created: function () {
+    this.socket = new WebSocket('ws://localhost:8888/ws')
+
+    this.socket.addEventListener('message', (event) => {
+      this.lastTag = event.data
+      console.log('data', event.data)
+    })
   },
   computed: {}
 }

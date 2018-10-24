@@ -11,9 +11,34 @@ import { promisify } from 'util'
 import * as fs from 'fs'
 import * as dotenv from 'dotenv'
 import * as path from 'path'
+// import * as WebSocket from 'ws'
+import Axios from 'axios'
 dotenv.load()
 
 const readFile = promisify(fs.readFile)
+
+// let socket: WebSocket
+// try {
+//   socket = new WebSocket('ws://localhost:8888/ws')
+// } catch (e) {
+//   console.log(e)
+// }
+//
+// socket.on('open', function open() {
+//   console.log('socket open')
+// })
+//
+// socket.on('connection', function connected() {
+//   console.log('connected')
+// })
+//
+// socket.on('close', function close(code) {
+//   console.log('socket closed', code)
+// })
+//
+// socket.on('error', function(error) {
+//   console.log(error)
+// })
 
 async function main(): Promise<void> {
   let refreshToken: string
@@ -70,6 +95,8 @@ async function main(): Promise<void> {
         } catch (e) {
           console.error(e)
         }
+      } else {
+        await Axios.get(`http://localhost:8888/api/rfid/${line}`)
       }
   })
 }

@@ -2,10 +2,11 @@ import { Router, Request, Response } from 'express'
 import { promisify } from 'util'
 import * as fs from 'fs'
 import * as path from 'path'
+import * as ws from 'ws'
 
 const readFile = promisify(fs.readFile)
 
-function api(): Router {
+function api(wss: ws.Server): Router {
   const router = Router()
 
   router.get('/playlists', async (req: Request, res: Response) => {
@@ -79,6 +80,22 @@ function api(): Router {
         }
       })
     }
+  })
+
+  router.get('/rfid/:id', async (req: Request, res: Response) => {
+    const rfid = req.params.id
+
+    wss.clients.forEach((client) => {
+      client.send(rfid)
+    })
+
+    return res.json({
+      messages: '',
+      errors: false,
+      payload: {
+        playlists: []
+      }
+    })
   })
 
   return router

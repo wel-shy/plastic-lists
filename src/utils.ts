@@ -68,7 +68,6 @@ export async function fetchAuthToken(refreshToken: string): Promise<string> {
       }
       else if (!error && response.statusCode === 200) {
         const access_token: string = body.access_token;
-        console.log(access_token)
         resolve(access_token)
       }
       else {

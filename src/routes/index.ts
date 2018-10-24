@@ -9,8 +9,8 @@ import api from './api'
  * @param  home( [description]
  * @return       [description]
  */
-export const addRoutes = (app: Express) => {
+export const addRoutes = (app: Express, wss: any) => {
   app.use('/', home())
-  app.use('/api', api())
+  app.use('/api', api(wss))
   return app
 }
