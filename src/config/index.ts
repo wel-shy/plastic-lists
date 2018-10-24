@@ -7,7 +7,9 @@ import { addRoutes } from '../routes'
 let app = express()
 
 app.use(express.static(path.join(__dirname, '../../public')))
-app.use(cors())
+app.use(cors({
+  origin: '*'
+}))
 app.use(cookieParser())
 
 app = addRoutes(app)

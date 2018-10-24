@@ -19,6 +19,8 @@ function home(): Router {
 
     res.cookie(stateKey, state);
 
+    console.log('redirecting')
+
     const scope = 'user-read-private user-read-email playlist-read-private playlist-read-collaborative user-read-playback-state user-modify-playback-state'
     res.redirect('https://accounts.spotify.com/authorize?' + querystring.stringify({
       response_type: 'code',
@@ -30,6 +32,7 @@ function home(): Router {
   })
 
   router.get('/callback', function(req: Request, res: Response) {
+    console.log('callback')
     const code = req.query.code || null
     const state = req.query.state || null
     const storedState = req.cookies ? req.cookies[stateKey] : null
@@ -68,23 +71,13 @@ function home(): Router {
             }
           }
 
-          const options = {
-            url: 'https://api.spotify.com/v1/me/playlists',
-            headers: { 'Authorization': 'Bearer ' + access_token},
-            json: true
-          }
-
-          request.get(options, function(error: Error, response: request.RequestResponse, body: any) {
-            console.log(body);
-          })
-
-          res.redirect('/#' +
+          res.redirect('http://localhost:8080?' +
             querystring.stringify({
               access_token: access_token,
               refresh_token: refresh_token
             }))
         } else {
-          res.redirect('/#' +
+          res.redirect('http://localhost:8080?' +
             querystring.stringify({
               error: 'invalid_token'
             }));
