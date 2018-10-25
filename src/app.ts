@@ -12,9 +12,6 @@ dotenv.load()
 
 let app = express()
 
-// Add static folder
-app.use(express.static(path.join(__dirname, '../../public')))
-
 // Add cors
 app.use(cors({
   origin: '*'
