@@ -16,7 +16,15 @@ export async function getPlaylists () {
  */
 export async function getLinks () {
   const response = await Axios.get('http://localhost:8888/api/links')
-  console.log(response)
   let links = response.data.payload.links
   return links
+}
+
+export async function removeLink (rfid) {
+  await Axios.delete(`http://localhost:8888/api/links/destroy/${rfid}`)
+}
+
+export async function createLink (rfid, playlist) {
+  const response = await Axios.post('http://localhost:8888/api/links/store', {rfid: rfid, playlist: playlist})
+  return response
 }

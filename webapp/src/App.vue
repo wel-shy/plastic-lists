@@ -8,19 +8,23 @@
               src="./assets/vinyl.svg"
               )
             h1.title Vinyl Player Thing
-            button.button(
-              @click="sendMessage"
-              ) Send
       div#login.has-text-centered(
         v-if="!isLoggedIn"
         )
         a.button(
           href="http://localhost:8888/login"
           ) Login to Spotify
-      div#last-tag
+      div#last-tag(
+        v-if="lastTag.length > 0"
+        )
         section.section
           h4.is-size-4 Last Unkown Tag:
           p {{ lastTag }}
+          button.button.is-rounded.is-primary(
+            @click="isAssigning = true"
+            )
+            p(v-if="!isAssigning") Assign
+            p(v-else) Click a playlist to assign the tag to
       div#playlists
         section.section
           div.columns.is-mobile
@@ -33,7 +37,8 @@
                 )
           ul.list
             li.list-item(
-              v-for="item in list"
+              v-for="item in list",
+              @click="assign(item.id)"
               )
                 div.columns.is-mobile
                   div.column.is-two-thirds
@@ -50,12 +55,16 @@
 </template>
 
 <script>
-import { getPlaylists, getLinks } from './api'
+import { getPlaylists, getLinks, removeLink, createLink } from './api'
 
 export default {
   name: 'App',
   components: {},
   methods: {
+    /**
+     * Fetch the user's playlists
+     * @return {[type]} [description]
+     */
     fillPlaylists: async function () {
       let playlists = []
       try {
@@ -65,6 +74,10 @@ export default {
         console.error(e)
       }
     },
+    /**
+     * Fetch the user's links
+     * @return {[type]} [description]
+     */
     fillLinks: async function () {
       let links = {}
       try {
@@ -78,18 +91,47 @@ export default {
         console.error(e)
       }
     },
+    /**
+     * Toggle editing state
+     * @return {[type]} [description]
+     */
     toggleEditing: function () {
       this.isEditing = !this.isEditing
     },
-    deleteTag: function (id) {
+    /**
+     * Delete a link
+     * @param  {[type]} id [description]
+     * @return {[type]}    [description]
+     */
+    deleteTag: async function (id) {
       for (let i = 0; i < this.list.length; i++) {
         if (this.list[i].id === id) {
+          await removeLink(this.list[i].rfid)
           this.list[i].rfid = ''
         }
       }
     },
-    sendMessage: function () {
-      this.socket.send('hello')
+    /**
+     * Assign a tag to a playlist
+     * @param  {[type]} id [description]
+     * @return {[type]}    [description]
+     */
+    assign: async function (id) {
+      if (!this.isAssigning) return
+
+      try {
+        await createLink(this.lastTag, id)
+      } catch (e) {
+        console.alert(e.message)
+      }
+
+      for (let i = 0; i < this.list.length; i++) {
+        if (this.list[i].id === id) {
+          this.list[i].rfid = this.lastTag
+        }
+      }
+
+      this.isAssigning = false
     }
   },
   data: function () {
@@ -102,7 +144,8 @@ export default {
       isEditing: false,
       list: [],
       socket: {},
-      lastTag: ''
+      lastTag: '',
+      isAssigning: false
     }
   },
   mounted: async function () {
