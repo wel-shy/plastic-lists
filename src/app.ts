@@ -5,7 +5,6 @@ import * as ws from 'ws'
 import * as express from 'express'
 import * as cors from 'cors'
 import * as cookieParser from 'cookie-parser'
-import * as path from 'path'
 import { addRoutes } from './routes'
 import * as bodyParser from 'body-parser'
 dotenv.load()
