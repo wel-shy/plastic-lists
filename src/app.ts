@@ -7,30 +7,42 @@ import * as cors from 'cors'
 import * as cookieParser from 'cookie-parser'
 import * as path from 'path'
 import { addRoutes } from './routes'
+import * as bodyParser from 'body-parser'
 dotenv.load()
 
 let app = express()
 
+// Add static folder
 app.use(express.static(path.join(__dirname, '../../public')))
+
+// Add cors
 app.use(cors({
   origin: '*'
 }))
+
+// Add cookie parser
 app.use(cookieParser())
 
+// Body parser for post and put routes
+app.use(bodyParser.urlencoded({extended: false}))
+app.use(bodyParser.json())
+
+// Create new server
 const server = new http.Server(app)
 
+// Create new websocket server
 const wss = new ws.Server({
   server: server,
   path: '/ws',
   clientTracking: true
 })
 
+// On connection
 wss.on('connection', (ws) => {
-  console.log('got connection from', ws)
+// On a new message
   ws.on('message', (message) => {
-    console.log('Received: ', message)
+  // Broadcast new message to all connected clients
     for (let client of wss.clients) {
-      console.log(client)
       client.send(message)
     }
   })
@@ -40,9 +52,9 @@ wss.on('error', (e) => {
   console.log(e)
 })
 
+// Add routes, pass websocket server to api router
 app = addRoutes(app, wss)
 
-console.log('Starting');
 server.listen(process.env.PORT, () => {
   console.log(`Listenting on ${process.env.PORT}`)
 })

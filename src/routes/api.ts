@@ -82,8 +82,8 @@ function api(wss: ws.Server): Router {
     }
   })
 
-  router.get('/rfid/:id', async (req: Request, res: Response) => {
-    const rfid = req.params.id
+  router.put('/rfid', async (req: Request, res: Response) => {
+    const rfid = req.body.rfid
 
     wss.clients.forEach((client) => {
       client.send(rfid)
