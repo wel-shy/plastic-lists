@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express"
-import { generateRandomString, saveTokenToFile, getRefreshToken } from '../utils'
+import { generateRandomString, saveTokenToFile, getRefreshToken } from '../../utils'
 import * as querystring from 'querystring'
 import * as request from 'request'
 

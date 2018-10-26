@@ -5,7 +5,7 @@ import {
   getUserPlaylists,
   storePlaylists,
   playPlaylist
-} from './utils'
+} from '../utils'
 import { promisify } from 'util'
 import * as fs from 'fs'
 import * as dotenv from 'dotenv'
