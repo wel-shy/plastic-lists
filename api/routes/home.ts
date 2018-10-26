@@ -56,6 +56,7 @@ function home(): Router {
       }
 
       request.post(authOptions, async function(error: Error, response: request.RequestResponse, body: any) {
+        const redirectUrl: string = process.env.DEBUG ? 'http://localhost:8080?' : 'http://localhost?'
         if (!error && response.statusCode === 200) {
           const access_token = body.access_token, refresh_token = body.refresh_token
 
@@ -69,14 +70,13 @@ function home(): Router {
               console.error(e)
             }
           }
-
-          res.redirect('http://localhost:8080?' +
+          res.redirect(redirectUrl +
             querystring.stringify({
               access_token: access_token,
               refresh_token: refresh_token
             }))
         } else {
-          res.redirect('http://localhost:8080?' +
+          res.redirect(redirectUrl +
             querystring.stringify({
               error: 'invalid_token'
             }));

@@ -38,6 +38,9 @@ npm --prefix ./webapp install ./webapp
 # Build vue project
 npm --prefix ./webapp run build
 
+# Copy files to nginx
+cp /webapp/dist/* /usr/share/nginx/html/
+
 # Make services executable
 chmod 755 services/api.service
 chmod 755 services/rfid.service
