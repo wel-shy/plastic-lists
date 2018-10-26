@@ -2,8 +2,9 @@
 
 printf "\033[1;31mUpdating and upgrading packages\033[0m\n"
 # Check for and install updates
-apt-get update -y && apt-get upgrade -y
-apt-get install nginx
+apt-get update -y
+apt-get upgrade -y
+apt-get install nginx -y
 
 ########################################################################################################################
 ### Install Node ###
@@ -37,7 +38,7 @@ npm --prefix ./webapp install ./webapp
 # Build vue project
 npm --prefix ./webapp run build
 
-Make services executable
+# Make services executable
 chmod 755 services/api.service
 chmod 755 services/rfid.service
 
