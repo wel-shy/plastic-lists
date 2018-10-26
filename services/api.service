@@ -1,0 +1,15 @@
+[Unit]
+Description=API
+After=network.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+ExecStart=/usr/local/bin/nodemon api/app.js
+WorkingDirectory=/home/pi/self-management/dist
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=root
+Group=root

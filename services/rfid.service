@@ -1,0 +1,16 @@
+[Unit]
+Description=RFID Reader
+Requires=api.service
+After=network.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+ExecStart=/usr/local/bin/nodemon rfid/rfid.js
+WorkingDirectory=/home/pi/self-management/dist
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=root
+Group=root
