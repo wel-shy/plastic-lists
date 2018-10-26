@@ -12,3 +12,14 @@ chmod +x setup.sh
 ```
 
 This will reboot the Pi, with the api and rfid reader scanning at boot.
+
+## Use
+### Link to Spotify
+Connect to the same wifi network as the device. Then go to:
+```
+http://vinyl
+```
+Use the interface to login into Spotify and give the device permission to use your account.
+
+### Link Playlists to Vinyls
+Stick an RFID tag to the back of a vinyl, and place it on the record player. The web interface will display the id of an unknown tag. Click link and then select a playlist to link it to.
