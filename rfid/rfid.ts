@@ -3,7 +3,8 @@ import {
   fetchAuthToken,
   getUserPlaylists,
   storePlaylists,
-  playPlaylist
+  playPlaylist,
+  pausePlaylist
 } from '../utils'
 import { promisify } from 'util'
 import * as fs from 'fs'
@@ -16,6 +17,9 @@ let id: string = ''
 let lastId: string = ''
 const scannerPath = '/dev/hidraw1'
 const readFile = promisify(fs.readFile)
+
+let lastRfid: string = ''
+let lastScanTimeStamp: number = 0
 
 /**
  * Convert hex to ascii
@@ -80,7 +84,7 @@ async function main(): Promise<void> {
   		if (input === '00') return
 
       // Convert hex to ascii character
-  		let ascii = hexToAscii((parseInt(input, 16)) + 1)
+  		let ascii: string = hexToAscii((parseInt(input, 16)) + 1)
 
       /*
        * If a new line, then the rfid tag has been constructed.
@@ -88,19 +92,34 @@ async function main(): Promise<void> {
        */
   		if (ascii === 'A') {
   			lastId = id.replace('A', '')
-  			id = ''
-  			console.log(lastId)
+        id = ''
 
-        if (links[lastId]) {
-          const playlist = userPlaylists[links[lastId].id]
-          console.log(`Playing: ${playlist.name}`)
+        const currentTime: number = new Date().getTime()
+
+        // If the last scan was longer than two seconds ago, and there is a new id.
+        if (currentTime - lastScanTimeStamp > (1000 * 2 /* 1 second x 60 */) && lastId !== lastRfid) {
+          // Assign to global last
+          lastRfid = lastId
+
+          if (links[lastId]) {
+            const playlist = userPlaylists[links[lastId].id]
+            console.log(`Playing: ${playlist.name}`)
+            try {
+              await playPlaylist(playlist.uri, access_token)
+            } catch (e) {
+              console.error(e)
+            }
+          } else { // send to server as the last unkown rfid.
+            await Axios.put(`http://localhost:8888/api/rfid`, {rfid: lastId})
+          }
+        } // longer than one minute since last scan
+        else if (currentTime - lastScanTimeStamp > (1000 * 60)) {
+          // stop playing playlist
           try {
-            await playPlaylist(playlist.uri, access_token)
-          } catch (e) {
+            await pausePlaylist(access_token)
+          } catch(e) {
             console.error(e)
           }
-        } else { // send to server as the last unkown rfid.
-          await Axios.put(`http://localhost:8888/api/rfid`, {rfid: lastId})
         }
   		}
 

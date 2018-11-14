@@ -148,3 +148,7 @@ export async function playPlaylist(uri: string, accessToken: string): Promise<vo
     console.error(e)
   }
 }
+
+export async function pausePlaylist(accessToken: string): Promise<void> {
+  await Axios.put('https://api.spotify.com/v1/me/player/play', {headers: { 'Authorization': 'Bearer ' + accessToken}})
+}
