@@ -1,4 +1,4 @@
-# Self-Management
+# Plastic Lists
 > A record player extension
 
 ## Setup
