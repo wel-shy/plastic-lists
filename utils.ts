@@ -104,8 +104,8 @@ export async function getUserPlaylists(accessToken: string): Promise<{}[]> {
 
 /**
  * Store users playlists to file
- * @param  playlists [description]
- * @return           [description]
+ * @param  playlists list of playlists
+ * @return           
  */
 export async function storePlaylists(playlists: {}[]): Promise<{}> {
   const data: any = {}
@@ -124,6 +124,12 @@ export async function storePlaylists(playlists: {}[]): Promise<{}> {
   return data
 }
 
+/**
+ * Link a playlist to an rfid tag and save to file
+ * @param  playlistId Playlist ID to link
+ * @param  rfid       rfid tag
+ * @return
+ */
 export async function linkPlaylistToRFID(playlistId: string, rfid: string): Promise<void> {
   const filePath = path.join(__dirname, '/../links.json')
 
@@ -141,6 +147,12 @@ export async function linkPlaylistToRFID(playlistId: string, rfid: string): Prom
   await writeFile(filePath, JSON.stringify(links, null, 2), 'utf8')
 }
 
+/**
+ * Play a playlist
+ * @param  uri         link to spotify list
+ * @param  accessToken access token from spotify
+ * @return
+ */
 export async function playPlaylist(uri: string, accessToken: string): Promise<void> {
   try {
     await Axios.put('https://api.spotify.com/v1/me/player/play', {context_uri: uri}, {headers: { 'Authorization': 'Bearer ' + accessToken}})
@@ -149,6 +161,11 @@ export async function playPlaylist(uri: string, accessToken: string): Promise<vo
   }
 }
 
+/**
+ * Pause a playlists playback from spotify
+ * @param  accessToken access token from spotify
+ * @return
+ */
 export async function pausePlaylist(accessToken: string): Promise<void> {
   await Axios.put('https://api.spotify.com/v1/me/player/play', {headers: { 'Authorization': 'Bearer ' + accessToken}})
 }
