@@ -65,7 +65,6 @@ function home(): Router {
             try {
               await saveTokenToFile(refresh_token)
               const token = await getRefreshToken()
-              console.log(token)
             } catch(e) {
               console.error(e)
             }
