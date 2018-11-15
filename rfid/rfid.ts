@@ -4,7 +4,8 @@ import {
   getUserPlaylists,
   storePlaylists,
   playPlaylist,
-  pausePlaylist
+  pausePlaylist,
+  setPlaybackDevice
 } from '../utils'
 import { promisify } from 'util'
 import * as fs from 'fs'
@@ -105,7 +106,11 @@ async function main(): Promise<void> {
             const playlist = userPlaylists[links[lastId].id]
             console.log(`Playing: ${playlist.name}`)
             try {
-              await playPlaylist(playlist.uri, access_token)
+              // Try and set the playback device to the vinyl player
+              const playbackDeviceSet: boolean = await setPlaybackDevice(access_token)
+              if (playbackDeviceSet) {
+                await playPlaylist(playlist.uri, access_token)
+              }
             } catch (e) {
               console.error(e)
             }

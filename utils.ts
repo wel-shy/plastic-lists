@@ -2,7 +2,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import { promisify } from 'util'
 import * as request from 'request'
-import Axios from 'axios'
+import Axios, {AxiosResponse, AxiosError} from 'axios'
 
 const writeFile = promisify(fs.writeFile)
 const readFile = promisify(fs.readFile)
@@ -105,7 +105,7 @@ export async function getUserPlaylists(accessToken: string): Promise<{}[]> {
 /**
  * Store users playlists to file
  * @param  playlists list of playlists
- * @return           
+ * @return
  */
 export async function storePlaylists(playlists: {}[]): Promise<{}> {
   const data: any = {}
@@ -168,4 +168,26 @@ export async function playPlaylist(uri: string, accessToken: string): Promise<vo
  */
 export async function pausePlaylist(accessToken: string): Promise<void> {
   await Axios.put('https://api.spotify.com/v1/me/player/play', {headers: { 'Authorization': 'Bearer ' + accessToken}})
+}
+
+/**
+ * Set the playback device to the id stored in the .env file
+ * @param  accessToken spotify access token
+ * @return
+ */
+export async function setPlaybackDevice(accessToken: string): Promise<boolean> {
+  if(accessToken === "" || !accessToken) throw new Error('Access token must be provided')
+
+  const url: string = 'https://api.spotify.com/v1/me/player'
+  const data = {
+    device_ids: process.env.DEVICE_ID
+  }
+  const options = {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`
+    }
+  }
+
+  const response: AxiosResponse = await Axios.put(url, data, options)
+  return response.status === 204
 }
