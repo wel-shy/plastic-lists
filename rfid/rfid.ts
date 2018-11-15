@@ -39,7 +39,7 @@ async function main(): Promise<void> {
 
   // Get any previously saved links between rfids and playlists from file.
   try {
-    rawLinks = await readFile(path.join(__dirname, '../links.json'), 'utf8')
+    rawLinks = await readFile(path.join(__dirname, '../../links.json'), 'utf8')
     links = JSON.parse(rawLinks)
   } catch (e) {
     console.error(e)

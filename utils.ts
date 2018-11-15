@@ -40,7 +40,8 @@ export async function saveTokenToFile(token: string): Promise<void> {
 export async function getRefreshToken(): Promise<string> {
 	const filePath = path.join(__dirname, '/../refresh_token.txt')
 
-	const token = await readFile(filePath, 'utf8')
+	let token: string = await readFile(filePath, 'utf8')
+  token = token.trim()
 	return token
 }
 
